@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meetme
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # A maximum of 1 Pod may be unavailable during the upgrade
+      maxSurge: 1        # Kubernetes can create up to 1 additional Pod during the upgrade
+  selector:
+    matchLabels:
+      app: meetme
+  template:
+    metadata:
+      labels:
+        app: meetme
+    spec:
+      containers:
+        - name: meetme
+          image: synthao/meetme:v1.0.15
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: meetme-config
+            - secretRef:
+                name: postgres-secret
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meetme-config
+data:
+  APP_ENV: "production"
+  LOG_LEVEL: "INFO"
+  APP_VERSION: "v1.0.15"
+
+  # Server
+  SERVER_PORT: "8080"
+  SERVER_HOST: "0.0.0.0"
+
+  # DB (exclude secrets)
+  POSTGRES_HOST: "postgres" # PostgreSQL service name в Kubernetes
+  POSTGRES_PORT: "5432"
+  IMGPROC_GRPC_SERVER_ADDRESS: "imageproc:50051"
